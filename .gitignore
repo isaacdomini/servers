@@ -1,0 +1,4 @@
+letsencrypt
+data
+*secret*
+*.env
