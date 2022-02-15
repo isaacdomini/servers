@@ -6,36 +6,51 @@ services:
     restart: unless-stopped
     volumes:
       - nextcloud-db:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     env_file:
       - db.env
 
-  nextcloud:
-    hostname: home.isaacdomini.com
-    image: nextcloud:latest
+  nextcloud-app:
+    hostname: cloud.isaacdomini.com
+    image: nextcloud:23-apache
     restart: unless-stopped
     volumes:
       - nextcloud:/var/www/html
       - /mnt/data/nextcloud:/opt/nextcloud/data
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     environment:
+      - TRUSTED_PROXIES=[10.0.0.1,10.0.0.3]
+      - REDIS_HOST=nextcloud-redis
+      - OVERWRITEPROTOCOL=https
+      - OVERWRITEHOST=cloud.isaacdomini.com
       - POSTGRES_HOST=nextcloud-db
       - NEXTCLOUD_DATA_DIR=/opt/nextcloud/data
     env_file:
       - db.env
     depends_on:
       - nextcloud-db
-  
-  collabora-code:
-    ports:
-      - '9980:9980'
-    image: collabora/code:latest
-    restart: always
-    environment:
-      - password=collaborapassword
-      - username=collabora
-      - domain=home.isaacdomini.com
-      - extra_params=--o:ssl.enable=true
-    env_file:
-      - collabora.env
+      - nextcloud-cron
+      - nextcloud-redis
+
+  nextcloud-cron:
+    image: nextcloud:23-apache
+    restart: unless-stopped
+    volumes:
+      - nextcloud:/var/www/html
+      - /mnt/data/nextcloud:/opt/nextcloud/data
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    entrypoint: /cron.sh
+    depends_on:
+      - nextcloud-db
+      - nextcloud-redis
+
+  nextcloud-redis:
+    image: redis:alpine
+    restart: unless-stopped
+
 volumes:
   nextcloud-db:
   nextcloud:
