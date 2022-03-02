@@ -24,7 +24,8 @@ services:
       - TRUSTED_PROXIES=[10.0.0.1,10.0.0.3]
       - REDIS_HOST=nextcloud-redis
       - OVERWRITEPROTOCOL=https
-      - OVERWRITEHOST=cloud.isaacdomini.com
+      - OVERWRITEHOST=domcloud.ml
+      - NEXTCLOUD_TRUSTED_DOMAINS=cloud.isaacdomini.com domcloud.ml
       - POSTGRES_HOST=nextcloud-db
       - NEXTCLOUD_DATA_DIR=/opt/nextcloud/data
     env_file:
