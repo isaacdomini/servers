@@ -1,0 +1,30 @@
+name: BATS Tests
+
+on:
+#  push:
+#    branches: [ master ]
+#  pull_request:
+#    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+      - name: Install freenom-script
+        run: sudo make install
+      - name: Configure freenom-script email
+        run: sudo sed -i 's/^#\(freenom_email="you@example.com\)/\1/g' /usr/local/etc/freenom.conf
+      - name: Configure freenom-script password
+        run: sudo sed -i 's/^#\(freenom_passwd="yourpassword\)/\1/g' /usr/local/etc/freenom.conf
+      - name: Install BATS
+        run: git clone https://github.com/bats-core/bats-core.git && cd bats-core && sudo ./install.sh /usr/local
+      - name: Configure BATS
+        run: sed -i '/@test.*args freenom.sh -l (example.tk)/a skip' test/freenom-args.bats && sed -i '/@test.*func_showResult/a skip' test/freenom-funcs.bats
+      #- name: Enable debug
+      #  run: sed -i 's/debug=0/debug=1/g' test/freenom-args.bats test/freenom-funcs.bats
+      - name: Run all BATS tests
+        run: test/test.sh all

@@ -1,0 +1,8 @@
+[Unit]
+Description="Weekly renewal of all freenom domains"
+
+[Timer]
+OnCalendar=weekly
+
+[Install]
+WantedBy=timers.target

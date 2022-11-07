@@ -12,8 +12,8 @@ services:
       - db.env
 
   nextcloud-app:
-    hostname: cloud.isaacdomini.com
-    image: nextcloud:23-apache
+    hostname: domcloud.ml
+    image: nextcloud:24-apache
     restart: unless-stopped
     volumes:
       - nextcloud:/var/www/html
@@ -25,7 +25,7 @@ services:
       - REDIS_HOST=nextcloud-redis
       - OVERWRITEPROTOCOL=https
       - OVERWRITEHOST=domcloud.ml
-      - NEXTCLOUD_TRUSTED_DOMAINS=cloud.isaacdomini.com domcloud.ml
+      - NEXTCLOUD_TRUSTED_DOMAINS=domcloud.ml
       - POSTGRES_HOST=nextcloud-db
       - NEXTCLOUD_DATA_DIR=/opt/nextcloud/data
     env_file:
@@ -36,7 +36,7 @@ services:
       - nextcloud-redis
 
   nextcloud-cron:
-    image: nextcloud:23-apache
+    image: nextcloud:24-apache
     restart: unless-stopped
     volumes:
       - nextcloud:/var/www/html

@@ -1,0 +1,6 @@
+[Unit]
+Description="Update ip of freenom domain %I"
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c '/usr/local/bin/freenom.sh -u $(echo %I|sed "s/\\(.\\+\\)\.\\(.\\+\..\\+\\)/-s \\1 \\2/")'
